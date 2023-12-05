@@ -2,6 +2,9 @@ plugins {
     id 'java'
     id 'application'
     id 'checkstyle'
+    id 'maven-publish'
+    id 'signing'
+    id("io.github.gradle-nexus.publish-plugin") version "1.3.0"
 }
 
 group = 'ch.geowerkstatt.interlis.testbed.runner'
@@ -19,6 +22,72 @@ application {
     mainClass = 'ch.geowerkstatt.interlis.testbed.runner.Main'
 }
 
+java {
+    withSourcesJar()
+    withJavadocJar()
+}
+
 test {
     useJUnitPlatform()
+}
+
+publishing {
+    publications {
+        GeowerkstattTestbedRunner(MavenPublication) {
+            from components.java
+            pom {
+                name = 'interlis-testbed-runner'
+                description = 'Testbed runner to test INTERLIS constraint definitions.'
+                url = 'https://github.com/GeoWerkstatt/interlis-testbed-runner'
+                licenses {
+                    license {
+                        name = 'MIT License'
+                        url = 'https://github.com/GeoWerkstatt/interlis-testbed-runner/blob/master/LICENSE'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'GeoWerkstatt'
+                        name = 'GeoWerkstatt GmbH'
+                        email = 'office@geowerkstatt.ch'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:git:https://github.com/GeoWerkstatt/interlis-testbed-runner.git'
+                    developerConnection = 'scm:git:git:https://github.com/GeoWerkstatt/interlis-testbed-runner.git'
+                    url = 'https://github.com/GeoWerkstatt/interlis-testbed-runner/'
+                }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            name = 'GitHubPackages'
+            url = uri('https://maven.pkg.github.com/GeoWerkstatt/interlis-testbed-runner')
+            credentials {
+                username = findProperty("GITHUB_ACTOR")
+                password = findProperty("GITHUB_TOKEN")
+            }
+        }
+    }
+}
+
+nexusPublishing {
+    repositories {
+        sonatype {  //only for users registered in Sonatype after 24 Feb 2021
+            username = findProperty("OSSRH_USER")
+            password = findProperty("OSSRH_PASSWORD")
+            nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
+            snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
+        }
+    }
+}
+
+signing {
+    def key = findProperty("SIGNING_KEY")
+    def password = findProperty("SIGNING_PASSWORD")
+
+    useInMemoryPgpKeys(key, password)
+    sign(publishing.publications.GeowerkstattTestbedRunner)
 }
