@@ -1,4 +1,4 @@
-package ch.geowerkstatt.ilivalidator.testbed;
+package ch.geowerkstatt.interlis.testbed.runner;
 
 public final class Main {
     private Main() {

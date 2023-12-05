@@ -1,4 +1,4 @@
-# testbed-runner
+# interlis-testbed-runner
 Der Testbed-Runner ermöglicht das Testen von Constraints bzw. der dazugehörigen Methoden basierend auf Testdaten in einer definierten Ordnerstruktur.
 
 ## Anwendung

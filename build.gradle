@@ -4,8 +4,7 @@ plugins {
     id 'checkstyle'
 }
 
-group = 'ch.geowerkstatt.ilivalidator.testbed'
-version = '1.0-SNAPSHOT'
+group = 'ch.geowerkstatt.interlis.testbed.runner'
 
 repositories {
     mavenCentral()
@@ -17,7 +16,7 @@ dependencies {
 }
 
 application {
-    mainClass = 'ch.geowerkstatt.ilivalidator.testbed.Main'
+    mainClass = 'ch.geowerkstatt.interlis.testbed.runner.Main'
 }
 
 test {
