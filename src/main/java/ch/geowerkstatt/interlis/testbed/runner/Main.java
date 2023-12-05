@@ -1,5 +1,7 @@
 package ch.geowerkstatt.interlis.testbed.runner;
 
+import org.apache.logging.log4j.LogManager;
+
 public final class Main {
     private Main() {
     }
@@ -10,6 +12,7 @@ public final class Main {
      * @param args the command line arguments.
      */
     public static void main(String[] args) {
-        System.out.println("Hello world!");
+        var logger = LogManager.getLogger();
+        logger.info("Hello World!");
     }
 }
