@@ -11,7 +11,6 @@ import java.nio.file.Path;
 
 public final class Main {
     private static final String VALIDATOR_PATH_OPTION = "validator";
-    private static final String TESTBED_PATH_OPTION = "testbed";
 
     private Main() {
     }
@@ -51,13 +50,12 @@ public final class Main {
 
     private static void printUsage(Options options) {
         HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp("java -jar interlis-testbed-runner.jar [options]", options);
+        formatter.printHelp("java -jar interlis-testbed-runner.jar [options] [testbed directory (default: current directory)]", options);
     }
 
     private static TestOptions getTestOptions(CommandLine commandLine) throws ParseException {
-        var basePath = commandLine.hasOption(TESTBED_PATH_OPTION)
-                ? Path.of(commandLine.getOptionValue(TESTBED_PATH_OPTION))
-                : Path.of(".");
+        var remainingArgs = commandLine.getArgList();
+        var basePath = remainingArgs.isEmpty() ? Path.of(".") : Path.of(remainingArgs.get(0));
         var validatorPath = Path.of(commandLine.getOptionValue(VALIDATOR_PATH_OPTION));
         return new TestOptions(basePath, validatorPath);
     }
@@ -73,14 +71,6 @@ public final class Main {
                 .desc("path to ilivalidator.jar")
                 .build();
         options.addOption(validatorPathOption);
-
-        var basePathOption = Option.builder("t")
-                .argName("path")
-                .longOpt(TESTBED_PATH_OPTION)
-                .hasArg()
-                .desc("base directory of testbed (default: current directory)")
-                .build();
-        options.addOption(basePathOption);
 
         return options;
     }

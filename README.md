@@ -24,5 +24,5 @@ TestSuiteA
 
 Der Runner kann mit folgendem Befehl ausgeführt werden:
 ```bash
-java -jar interlis-testbed-runner.jar --validator <Pfad zu ilivalidator.jar> --testbed <Pfad zum Testbed-Ordner>
+java -jar interlis-testbed-runner.jar --validator <Pfad zu ilivalidator.jar> <Pfad zum Testbed-Ordner (Standard: aktueller Ordner)>
 ```
