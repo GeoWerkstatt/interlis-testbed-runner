@@ -34,6 +34,14 @@ java {
     withJavadocJar()
 }
 
+jar {
+    manifest {
+        attributes(
+                'Main-Class': application.mainClass
+        )
+    }
+}
+
 test {
     useJUnitPlatform()
 }
