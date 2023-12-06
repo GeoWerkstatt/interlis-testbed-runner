@@ -5,6 +5,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +34,7 @@ public final class RunnerTest {
     }
 
     @Test
-    public void runValidatesBaseData() {
+    public void runValidatesBaseData() throws IOException {
         var validatedFiles = new ArrayList<Path>();
 
         var runner = new Runner(options, file -> {
@@ -45,10 +46,12 @@ public final class RunnerTest {
 
         assertTrue(runResult, "Testbed run should have been successful.");
 
-        var baseDataFile = Path.of(BASE_PATH, "Successful_Data.xtf").toAbsolutePath().normalize();
-        assertEquals(baseDataFile, options.baseDataFilePath());
+        var expectedBaseDataFile = Path.of(BASE_PATH, "data.xtf").toAbsolutePath().normalize();
+        var baseDataFile = options.baseDataFilePath();
+        assertFalse(baseDataFile.isEmpty(), "Base data file should have been found.");
+        assertEquals(expectedBaseDataFile, baseDataFile.get());
 
-        var expectedFiles = List.of(baseDataFile);
+        var expectedFiles = List.of(expectedBaseDataFile);
         assertIterableEquals(expectedFiles, validatedFiles);
 
         var errors = appender.getMessages()

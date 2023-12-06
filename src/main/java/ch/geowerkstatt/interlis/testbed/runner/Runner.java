@@ -3,6 +3,10 @@ package ch.geowerkstatt.interlis.testbed.runner;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Optional;
+
 public final class Runner {
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -28,7 +32,7 @@ public final class Runner {
         LOGGER.info("Starting validation of testbed at " + options.basePath());
 
         try {
-            if (!validateSuccessfulData()) {
+            if (!validateBaseData()) {
                 LOGGER.error("Validation of base data failed.");
                 return false;
             }
@@ -41,9 +45,20 @@ public final class Runner {
         return true;
     }
 
-    private boolean validateSuccessfulData() throws ValidatorException {
-        var filePath = options.baseDataFilePath();
-        LOGGER.info("Validating base data file " + filePath);
-        return validator.validate(filePath);
+    private boolean validateBaseData() throws ValidatorException {
+        Optional<Path> filePath;
+        try {
+            filePath = options.baseDataFilePath();
+        } catch (IOException e) {
+            throw new ValidatorException(e);
+        }
+
+        if (filePath.isEmpty()) {
+            LOGGER.error("No base data file found.");
+            return false;
+        }
+
+        LOGGER.info("Validating base data file " + filePath.get());
+        return validator.validate(filePath.get());
     }
 }
