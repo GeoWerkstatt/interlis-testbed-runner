@@ -2,9 +2,7 @@
 Der Testbed-Runner ermöglicht das Testen von Constraints bzw. der dazugehörigen Methoden basierend auf Testdaten in einer definierten Ordnerstruktur.
 
 ## Anwendung
-Der Runner funktioniert generisch auf einer entsprechenden Verzeichnisstruktur und globalen ilivalidator-Installation.
-
-Diese Struktur ist folgendermassen aufgebaut:
+Der Runner funktioniert generisch auf einer entsprechenden Verzeichnisstruktur mit diesem Aufbau:
 
 ```
 TestSuiteA
@@ -22,4 +20,9 @@ TestSuiteA
         ModelA.TopicA.ClassA.Constraint1
             FailCase-1_Merged.xtf
             FailCase-1.log
+```
+
+Der Runner kann mit folgendem Befehl ausgeführt werden:
+```bash
+java -jar interlis-testbed-runner.jar --validator <Pfad zu ilivalidator.jar> --testbed <Pfad zum Testbed-Ordner>
 ```
