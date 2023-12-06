@@ -6,7 +6,6 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.logging.log4j.LogManager;
 
 import java.nio.file.Path;
 
@@ -29,9 +28,9 @@ public final class Main {
         }
 
         var testOptions = parseTestOptions(args);
-        var logger = LogManager.getLogger();
-        logger.info("base path: " + testOptions.basePath());
-        logger.info("validator path: " + testOptions.ilivalidatorPath());
+        var validator = new InterlisValidator(testOptions);
+        var runner = new Runner(testOptions, validator);
+        runner.run();
     }
 
     private static TestOptions parseTestOptions(String[] args) {
