@@ -22,6 +22,7 @@ public final class Runner {
 
     /**
      * Runs the testbed validation.
+     * @return {@code true} if the validation was successful, {@code false} otherwise.
      */
     public boolean run() {
         LOGGER.info("Starting validation of testbed at " + options.basePath());
