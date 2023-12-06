@@ -30,7 +30,9 @@ public final class Main {
         var testOptions = parseTestOptions(args);
         var validator = new InterlisValidator(testOptions);
         var runner = new Runner(testOptions, validator);
-        runner.run();
+        if (!runner.run()) {
+            System.exit(1);
+        }
     }
 
     private static TestOptions parseTestOptions(String[] args) {

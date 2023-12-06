@@ -23,18 +23,24 @@ public final class Runner {
     /**
      * Runs the testbed validation.
      */
-    public void run() {
+    public boolean run() {
         LOGGER.info("Starting validation of testbed at " + options.basePath());
 
-        if (!validateSuccessfulData()) {
-            LOGGER.error("Validation of base data failed.");
-            return;
+        try {
+            if (!validateSuccessfulData()) {
+                LOGGER.error("Validation of base data failed.");
+                return false;
+            }
+        } catch (ValidatorException e) {
+            LOGGER.error("Validation could not run, check the configuration.", e);
+            return false;
         }
 
         LOGGER.info("Validation of testbed completed.");
+        return true;
     }
 
-    private boolean validateSuccessfulData() {
+    private boolean validateSuccessfulData() throws ValidatorException {
         var filePath = options.baseDataFilePath();
         LOGGER.info("Validating base data file " + filePath);
         return validator.validate(filePath);

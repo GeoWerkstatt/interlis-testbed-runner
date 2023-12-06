@@ -4,6 +4,7 @@ import java.nio.file.Path;
 
 public record TestOptions(Path basePath, Path ilivalidatorPath) {
     private static final String BASE_DATA_FILENAME = "Successful_Data.xtf";
+    private static final String OUTPUT_DIR_NAME = "output";
 
     /**
      * Creates a new instance of the RunnerOptions class.
@@ -22,5 +23,14 @@ public record TestOptions(Path basePath, Path ilivalidatorPath) {
      */
     public Path baseDataFilePath() {
         return basePath.resolve(BASE_DATA_FILENAME);
+    }
+
+    /**
+     * Gets the path to the output directory.
+     *
+     * @return the path to the output directory.
+     */
+    public Path outputPath() {
+        return basePath.resolve(OUTPUT_DIR_NAME);
     }
 }
