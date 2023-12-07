@@ -18,15 +18,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public final class RunnerTest {
     private static final String BASE_PATH = "src/test/data/testbed";
+    private static final String BASE_PATH_WITH_PATCHES = "src/test/data/testbed-with-patches";
+    private static final Path ILI_VALIDATOR_PATH = Path.of("ilivalidator.jar");
 
     private TestLogAppender appender;
-    private TestOptions options;
     private XtfMerger nullMerger;
 
     @BeforeEach
     public void setup() {
         appender = TestLogAppender.registerAppender(Runner.class);
-        options = new TestOptions(Path.of(BASE_PATH), Path.of("ilivalidator.jar"));
         nullMerger = (baseFile, patchFile, outputFile) -> true;
     }
 
@@ -39,6 +39,7 @@ public final class RunnerTest {
     @Test
     public void runValidatesBaseData() throws IOException {
         var validatedFiles = new ArrayList<Path>();
+        var options = new TestOptions(Path.of(BASE_PATH), ILI_VALIDATOR_PATH);
 
         var runner = new Runner(options, (file, logFile) -> {
             validatedFiles.add(file.toAbsolutePath().normalize());
@@ -63,6 +64,7 @@ public final class RunnerTest {
 
     @Test
     public void runLogsValidationError() {
+        var options = new TestOptions(Path.of(BASE_PATH), ILI_VALIDATOR_PATH);
         var runner = new Runner(options, (file, logFile) -> false, nullMerger);
 
         var runResult = runner.run();
@@ -76,5 +78,34 @@ public final class RunnerTest {
                 Pattern.matches("Validation of .*? failed\\..*", errorMessage),
                 "Error message should start with 'Validation of <base data file> failed.', actual value: '" + errorMessage + "'."
         );
+    }
+
+    @Test
+    public void runMergesAndValidatesPatchFiles() {
+        var validatedFiles = new ArrayList<Path>();
+        var foundPatchFiles = new ArrayList<Path>();
+        var options = new TestOptions(Path.of(BASE_PATH_WITH_PATCHES), ILI_VALIDATOR_PATH);
+
+        var runner = new Runner(options, (file, logFile) -> {
+            validatedFiles.add(file.toAbsolutePath().normalize());
+            return file.getFileName().toString().equals("data.xtf");
+        }, (baseFile, patchFile, outputFile) -> {
+            foundPatchFiles.add(patchFile.toAbsolutePath().normalize());
+            return true;
+        });
+
+        var runResult = runner.run();
+
+        assertTrue(runResult, "Testbed run should have succeeded.");
+
+        var errors = appender.getErrorMessages();
+        assertTrue(errors.isEmpty(), "No errors should have been logged.");
+
+        var expectedBaseDataFile = Path.of(BASE_PATH_WITH_PATCHES, "data.xtf").toAbsolutePath().normalize();
+        var expectedMergedFile = Path.of(BASE_PATH_WITH_PATCHES, "output", "constraintA", "testcase-1_merged.xtf").toAbsolutePath().normalize();
+        assertIterableEquals(List.of(expectedBaseDataFile, expectedMergedFile), validatedFiles);
+
+        var expectedPatchFile = Path.of(BASE_PATH_WITH_PATCHES, "constraintA", "testcase-1.xtf").toAbsolutePath().normalize();
+        assertIterableEquals(List.of(expectedPatchFile), foundPatchFiles);
     }
 }
