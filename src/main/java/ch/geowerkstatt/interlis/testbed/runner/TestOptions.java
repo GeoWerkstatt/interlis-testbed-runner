@@ -32,6 +32,18 @@ public record TestOptions(Path basePath, Path ilivalidatorPath) {
     }
 
     /**
+     * Resolves the path to the output file based on the relative path of the input file.
+     *
+     * @param filePath    the path to the input file.
+     * @param newFileName the name of the output file.
+     * @return the path to the output file.
+     */
+    public Path resolveOutputFilePath(Path filePath, String newFileName) {
+        var relativePath = basePath.relativize(filePath.getParent());
+        return outputPath().resolve(relativePath).resolve(newFileName);
+    }
+
+    /**
      * Gets the path to the output directory.
      *
      * @return the path to the output directory.

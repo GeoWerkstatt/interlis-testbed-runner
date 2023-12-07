@@ -24,33 +24,23 @@ public final class InterlisValidator implements Validator {
     }
 
     @Override
-    public boolean validate(Path filePath) throws ValidatorException {
-        var relativePath = options.basePath().relativize(filePath.getParent());
-        var logDirectory = options.outputPath().resolve(relativePath);
-
-        var filenameWithoutExtension = StringUtils.getFilenameWithoutExtension(filePath.getFileName().toString());
-        var logFile = logDirectory.resolve(filenameWithoutExtension + ".log");
-
+    public boolean validate(Path filePath, Path logFile) throws ValidatorException {
+        LOGGER.info("Validating " + filePath + " with log file " + logFile);
         try {
-            Files.createDirectories(logDirectory);
+            Files.createDirectories(logFile.getParent());
 
             var processBuilder = new ProcessBuilder()
                     .command(
                             "java", "-jar", options.ilivalidatorPath().toString(),
                             "--log", logFile.toString(),
                             filePath.toString())
+                    .redirectOutput(ProcessBuilder.Redirect.DISCARD)
+                    .redirectError(ProcessBuilder.Redirect.DISCARD)
                     .directory(options.basePath().toFile());
 
             var process = processBuilder.start();
             var exitCode = process.waitFor();
-
-            if (exitCode == 0) {
-                LOGGER.info("Validation of " + filePath + " completed successfully.");
-                return true;
-            } else {
-                LOGGER.error("Validation of " + filePath + " failed with exit code " + exitCode + ". See " + logFile + " for details.");
-                return false;
-            }
+            return exitCode == 0;
         } catch (IOException | InterruptedException e) {
             throw new ValidatorException(e);
         }

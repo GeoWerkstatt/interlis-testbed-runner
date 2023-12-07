@@ -5,13 +5,13 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Optional;
 
 public final class Runner {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final TestOptions options;
     private final Validator validator;
+    private Path baseFilePath;
 
     /**
      * Creates a new instance of the Runner class.
@@ -33,7 +33,6 @@ public final class Runner {
 
         try {
             if (!validateBaseData()) {
-                LOGGER.error("Validation of base data failed.");
                 return false;
             }
         } catch (ValidatorException e) {
@@ -46,19 +45,27 @@ public final class Runner {
     }
 
     private boolean validateBaseData() throws ValidatorException {
-        Optional<Path> filePath;
         try {
-            filePath = options.baseDataFilePath();
+            var baseFilePath = options.baseDataFilePath();
+            if (baseFilePath.isEmpty()) {
+                LOGGER.error("No base data file found.");
+                return false;
+            }
+            this.baseFilePath = baseFilePath.get();
         } catch (IOException e) {
             throw new ValidatorException(e);
         }
 
-        if (filePath.isEmpty()) {
-            LOGGER.error("No base data file found.");
-            return false;
-        }
+        LOGGER.info("Validating base data file " + baseFilePath);
+        var filenameWithoutExtension = StringUtils.getFilenameWithoutExtension(baseFilePath.getFileName().toString());
+        var logFile = options.resolveOutputFilePath(baseFilePath, filenameWithoutExtension + ".log");
 
-        LOGGER.info("Validating base data file " + filePath.get());
-        return validator.validate(filePath.get());
+        var valid = validator.validate(baseFilePath, logFile);
+        if (valid) {
+            LOGGER.info("Validation of " + baseFilePath + " completed successfully.");
+        } else {
+            LOGGER.error("Validation of " + baseFilePath + " failed. See " + logFile + " for details.");
+        }
+        return valid;
     }
 }

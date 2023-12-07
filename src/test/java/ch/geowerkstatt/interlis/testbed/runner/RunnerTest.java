@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -36,7 +37,7 @@ public final class RunnerTest {
     public void runValidatesBaseData() throws IOException {
         var validatedFiles = new ArrayList<Path>();
 
-        var runner = new Runner(options, file -> {
+        var runner = new Runner(options, (file, logFile) -> {
             validatedFiles.add(file.toAbsolutePath().normalize());
             return true;
         });
@@ -59,7 +60,7 @@ public final class RunnerTest {
 
     @Test
     public void runLogsValidationError() {
-        var runner = new Runner(options, file -> false);
+        var runner = new Runner(options, (file, logFile) -> false);
 
         var runResult = runner.run();
 
@@ -67,6 +68,10 @@ public final class RunnerTest {
 
         var errors = appender.getErrorMessages();
         assertEquals(1, errors.size(), "One error should have been logged.");
-        assertEquals("Validation of base data failed.", errors.getFirst());
+        var errorMessage = errors.getFirst();
+        assertTrue(
+                Pattern.matches("Validation of .*? failed\\..*", errorMessage),
+                "Error message should start with 'Validation of <base data file> failed.', actual value: '" + errorMessage + "'."
+        );
     }
 }
