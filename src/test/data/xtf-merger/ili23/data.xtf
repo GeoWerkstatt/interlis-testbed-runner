@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TRANSFER xmlns="http://www.interlis.ch/INTERLIS2.3">
+    <HEADERSECTION SENDER="interlis-testbed-runner" VERSION="2.3">
+        <MODELS>
+        </MODELS>
+    </HEADERSECTION>
+    <DATASECTION>
+        <ModelA.TopicA BID="B1">
+            <ModelA.TopicA.ClassA TID="A1">
+                <attr1>Some text</attr1>
+                <attr2>Some more text</attr2>
+            </ModelA.TopicA.ClassA>
+            <ModelA.TopicA.ClassA TID="A2">
+                <attr1>Some text</attr1>
+                <attr2>Some more text</attr2>
+            </ModelA.TopicA.ClassA>
+        </ModelA.TopicA>
+
+        <ModelA.TopicA BID="B2">
+            <ModelA.TopicA.ClassA TID="A1">
+                <attr1>Some text</attr1>
+                <attr2>Some more text</attr2>
+            </ModelA.TopicA.ClassA>
+        </ModelA.TopicA>
+    </DATASECTION>
+</TRANSFER>

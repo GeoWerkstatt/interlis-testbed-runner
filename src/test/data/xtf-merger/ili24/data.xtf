@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ili:transfer xmlns:ili="http://www.interlis.ch/xtf/2.4/INTERLIS">
+<ili:transfer xmlns:ili="http://www.interlis.ch/xtf/2.4/INTERLIS" xmlns="http://www.interlis.ch/xtf/2.4/ModelA">
     <ili:headersection>
         <ili:models>
         </ili:models>
         <ili:sender>interlis-testbed-runner</ili:sender>
     </ili:headersection>
     <ili:datasection>
-        <ModelA.TopicA BID="B1">
-            <ModelA.TopicA.ClassA TID="A1">
+        <TopicA ili:bid="B1">
+            <ClassA ili:tid="A1">
                 <attr1>Some text</attr1>
                 <attr2>Some more text</attr2>
-            </ModelA.TopicA.ClassA>
-            <ModelA.TopicA.ClassA TID="A2">
+            </ClassA>
+            <ClassA ili:tid="A2">
                 <attr1>Some text</attr1>
                 <attr2>Some more text</attr2>
-            </ModelA.TopicA.ClassA>
-        </ModelA.TopicA>
+            </ClassA>
+        </TopicA>
 
-        <ModelA.TopicA BID="B2">
-            <ModelA.TopicA.ClassA TID="A1">
+        <TopicA ili:bid="B2">
+            <ClassA ili:tid="A1">
                 <attr1>Some text</attr1>
                 <attr2>Some more text</attr2>
-            </ModelA.TopicA.ClassA>
-        </ModelA.TopicA>
+            </ClassA>
+        </TopicA>
     </ili:datasection>
 </ili:transfer>

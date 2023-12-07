@@ -26,6 +26,7 @@ public final class XtfFileMerger implements XtfMerger {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final String BASKET_ID = "BID";
     private static final String OBJECT_ID = "TID";
+    private static final String INTERLIS24_NAMESPACE = "http://www.interlis.ch/xtf/2.4/INTERLIS";
 
     private final DocumentBuilderFactory factory;
 
@@ -117,27 +118,43 @@ public final class XtfFileMerger implements XtfMerger {
 
         var baskets = streamChildElementNodes(dataSection.get())
                 .filter(e -> {
-                    var hasId = e.hasAttribute(BASKET_ID);
+                    var hasId = hasInterlisAttribute(e, BASKET_ID);
                     if (!hasId) {
                         LOGGER.warn("Basket without " + BASKET_ID + " found.");
                     }
                     return hasId;
                 })
-                .collect(Collectors.toMap(e -> e.getAttribute(BASKET_ID), XtfFileMerger::collectBasket));
+                .collect(Collectors.toMap(e -> getInterlisAttribute(e, BASKET_ID), XtfFileMerger::collectBasket));
         return Optional.of(baskets);
     }
 
     private static Basket collectBasket(Element basket) {
         var objects = streamChildElementNodes(basket)
                 .filter(e -> {
-                    var hasId = e.hasAttribute(OBJECT_ID);
+                    var hasId = hasInterlisAttribute(e, OBJECT_ID);
                     if (!hasId) {
                         LOGGER.warn("Entry without " + OBJECT_ID + " found in basket " + basket.getAttribute(BASKET_ID) + ".");
                     }
                     return hasId;
                 })
-                .collect(Collectors.toMap(e -> e.getAttribute(OBJECT_ID), e -> e));
+                .collect(Collectors.toMap(e -> getInterlisAttribute(e, OBJECT_ID), e -> e));
         return new Basket(basket, objects);
+    }
+
+    private static boolean hasInterlisAttribute(Element element, String attributeName) {
+        return getInterlisAttribute(element, attributeName) != null;
+    }
+
+    private static String getInterlisAttribute(Element element, String attributeName) {
+        if (element.hasAttribute(attributeName)) {
+            return element.getAttribute(attributeName);
+        }
+
+        var ili24Name = attributeName.toLowerCase();
+        if (element.hasAttributeNS(INTERLIS24_NAMESPACE, ili24Name)) {
+            return element.getAttributeNS(INTERLIS24_NAMESPACE, ili24Name);
+        }
+        return null;
     }
 
     private static Optional<Element> findDataSection(Document document) {

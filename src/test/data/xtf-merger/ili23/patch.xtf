@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ili:transfer xmlns:ili="http://www.interlis.ch/xtf/2.4/INTERLIS">
-    <ili:datasection>
+<TRANSFER xmlns="http://www.interlis.ch/INTERLIS2.3">
+    <DATASECTION>
         <ModelA.TopicA BID="B1">
             <ModelA.TopicA.ClassA TID="A2">
                 <attr1>New value for attr1</attr1>
@@ -11,5 +11,5 @@
                 <attr2>Attr2</attr2>
             </ModelA.TopicA.ClassA>
         </ModelA.TopicA>
-    </ili:datasection>
-</ili:transfer>
+    </DATASECTION>
+</TRANSFER>

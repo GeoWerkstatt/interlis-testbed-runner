@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ili:transfer xmlns:ili="http://www.interlis.ch/xtf/2.4/INTERLIS" xmlns="http://www.interlis.ch/xtf/2.4/ModelA">
+    <ili:datasection>
+        <TopicA ili:bid="B1">
+            <ClassA ili:tid="A2">
+                <attr1>New value for attr1</attr1>
+                <!-- missing attribute attr2 -->
+            </ClassA>
+            <ClassA ili:tid="A3">
+                <attr1>New entry</attr1>
+                <attr2>Attr2</attr2>
+            </ClassA>
+        </TopicA>
+    </ili:datasection>
+</ili:transfer>
