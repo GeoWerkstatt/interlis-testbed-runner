@@ -1,5 +1,6 @@
 package ch.geowerkstatt.interlis.testbed.runner;
 
+import ch.geowerkstatt.interlis.testbed.runner.xtf.XtfMerger;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,11 +21,13 @@ public final class RunnerTest {
 
     private TestLogAppender appender;
     private TestOptions options;
+    private XtfMerger nullMerger;
 
     @BeforeEach
     public void setup() {
         appender = TestLogAppender.registerAppender(Runner.class);
         options = new TestOptions(Path.of(BASE_PATH), Path.of("ilivalidator.jar"));
+        nullMerger = (baseFile, patchFile, outputFile) -> true;
     }
 
     @AfterEach
@@ -40,11 +43,14 @@ public final class RunnerTest {
         var runner = new Runner(options, (file, logFile) -> {
             validatedFiles.add(file.toAbsolutePath().normalize());
             return true;
-        });
+        }, nullMerger);
 
         var runResult = runner.run();
 
-        assertTrue(runResult, "Testbed run should have been successful.");
+        assertFalse(runResult, "Testbed run should have failed without patch files.");
+
+        var errors = appender.getErrorMessages();
+        assertIterableEquals(List.of("No patch files found."), errors);
 
         var expectedBaseDataFile = Path.of(BASE_PATH, "data.xtf").toAbsolutePath().normalize();
         var baseDataFile = options.baseDataFilePath();
@@ -53,14 +59,11 @@ public final class RunnerTest {
 
         var expectedFiles = List.of(expectedBaseDataFile);
         assertIterableEquals(expectedFiles, validatedFiles);
-
-        var errors = appender.getErrorMessages();
-        assertEquals(0, errors.size(), "No errors should have been logged.");
     }
 
     @Test
     public void runLogsValidationError() {
-        var runner = new Runner(options, (file, logFile) -> false);
+        var runner = new Runner(options, (file, logFile) -> false, nullMerger);
 
         var runResult = runner.run();
 

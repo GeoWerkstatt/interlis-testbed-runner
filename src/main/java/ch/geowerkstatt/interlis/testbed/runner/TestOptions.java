@@ -3,6 +3,8 @@ package ch.geowerkstatt.interlis.testbed.runner;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -26,8 +28,22 @@ public record TestOptions(Path basePath, Path ilivalidatorPath) {
      * @return the path to the base data file.
      */
     public Optional<Path> baseDataFilePath() throws IOException {
-        try (var dataFiles = findDataFiles(basePath)) {
+        try (var dataFiles = findDataFiles(basePath, 1)) {
             return dataFiles.findFirst();
+        }
+    }
+
+    /**
+     * Gets the paths to the patch data files.
+     *
+     * @return the paths to the patch data files.
+     */
+    public List<Path> patchDataFiles() throws IOException {
+        try (var dataFiles = findDataFiles(basePath, 2)) {
+            var outputPath = outputPath();
+            return dataFiles
+                    .filter(path -> !path.getParent().equals(basePath) && !path.startsWith(outputPath))
+                    .toList();
         }
     }
 
@@ -52,7 +68,11 @@ public record TestOptions(Path basePath, Path ilivalidatorPath) {
         return basePath.resolve(OUTPUT_DIR_NAME);
     }
 
-    private static Stream<Path> findDataFiles(Path basePath) throws IOException {
-        return Files.find(basePath, 1, (path, attributes) -> path.getFileName().toString().toLowerCase().endsWith(DATA_FILE_EXTENSION));
+    private static Stream<Path> findDataFiles(Path basePath, int maxDepth) throws IOException {
+        return Files.find(basePath, maxDepth, TestOptions::isDataFile);
+    }
+
+    private static boolean isDataFile(Path path, BasicFileAttributes attributes) {
+        return attributes.isRegularFile() && path.getFileName().toString().toLowerCase().endsWith(DATA_FILE_EXTENSION);
     }
 }
