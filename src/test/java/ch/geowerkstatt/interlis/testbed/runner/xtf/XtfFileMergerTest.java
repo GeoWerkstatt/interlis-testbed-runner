@@ -41,6 +41,12 @@ public final class XtfFileMergerTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"ili23", "ili24"})
+    public void replaceElements(String iliVersion) throws IOException {
+        mergeAndValidateXtf(Path.of(DATA_BASE_PATH, iliVersion, "replace"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"ili23", "ili24"})
     public void combinedOperations(String iliVersion) throws IOException {
         mergeAndValidateXtf(Path.of(DATA_BASE_PATH, iliVersion, "combined"));
     }
