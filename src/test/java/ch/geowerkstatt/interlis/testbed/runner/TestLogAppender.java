@@ -26,14 +26,13 @@ public final class TestLogAppender extends AbstractAppender {
     }
 
     public static TestLogAppender registerAppender(Class<?> loggerClass) {
-        var mockedAppender = new TestLogAppender(loggerClass);
+        var testLogAppender = new TestLogAppender(loggerClass);
+        testLogAppender.start();
 
         var logger = (Logger) LogManager.getLogger(loggerClass);
-        logger.addAppender(mockedAppender);
-        logger.setLevel(Level.ALL);
+        logger.get().addAppender(testLogAppender, Level.ALL, null);
 
-        mockedAppender.start();
-        return mockedAppender;
+        return testLogAppender;
     }
 
     public void unregister() {
@@ -43,6 +42,13 @@ public final class TestLogAppender extends AbstractAppender {
 
     public List<LogEntry> getMessages() {
         return messages;
+    }
+
+    public List<String> getErrorMessages() {
+        return messages.stream()
+                .filter(e -> e.level().equals(Level.ERROR))
+                .map(LogEntry::message)
+                .toList();
     }
 
     @Override

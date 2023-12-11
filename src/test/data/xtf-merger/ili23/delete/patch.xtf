@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TRANSFER xmlns="http://www.interlis.ch/INTERLIS2.3">
+    <DATASECTION>
+        <ModelA.TopicA BID="B1">
+            <ModelA.TopicA.ClassA TID="A1_2" DELETE=""/>
+        </ModelA.TopicA>
+        <ModelA.TopicA BID="B2" DELETE=""/>
+    </DATASECTION>
+</TRANSFER>

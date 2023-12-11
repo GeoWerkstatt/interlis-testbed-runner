@@ -1,6 +1,5 @@
 package ch.geowerkstatt.interlis.testbed.runner;
 
-import org.apache.logging.log4j.Level;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -54,10 +53,8 @@ public final class RunnerTest {
         var expectedFiles = List.of(expectedBaseDataFile);
         assertIterableEquals(expectedFiles, validatedFiles);
 
-        var errors = appender.getMessages()
-                .stream()
-                .filter(e -> e.level().equals(Level.ERROR));
-        assertEquals(0, errors.count(), "No errors should have been logged.");
+        var errors = appender.getErrorMessages();
+        assertEquals(0, errors.size(), "No errors should have been logged.");
     }
 
     @Test
@@ -68,11 +65,8 @@ public final class RunnerTest {
 
         assertFalse(runResult, "Testbed run should have failed.");
 
-        var errors = appender.getMessages()
-                .stream()
-                .filter(e -> e.level().equals(Level.ERROR))
-                .toList();
+        var errors = appender.getErrorMessages();
         assertEquals(1, errors.size(), "One error should have been logged.");
-        assertEquals("Validation of base data failed.", errors.get(0).message());
+        assertEquals("Validation of base data failed.", errors.getFirst());
     }
 }
