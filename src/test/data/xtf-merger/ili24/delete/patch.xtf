@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ili:transfer xmlns:ili="http://www.interlis.ch/xtf/2.4/INTERLIS" xmlns="http://www.interlis.ch/xtf/2.4/ModelA">
+    <ili:datasection>
+        <TopicA ili:bid="B1">
+            <ClassA ili:tid="A1_2" delete=""/>
+        </TopicA>
+        <TopicA ili:bid="B2" delete=""/>
+    </ili:datasection>
+</ili:transfer>

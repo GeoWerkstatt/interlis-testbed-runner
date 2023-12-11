@@ -12,12 +12,35 @@ public record Basket(Element element, Map<String, Element> objects) {
      * @param entryId the entry ID
      * @param node    the node to add or replace
      */
-    public void addOrReplaceChild(String entryId, Node node) {
+    public void addOrReplaceChildNode(String entryId, Node node) {
         var originalEntry = objects().get(entryId);
         if (originalEntry == null) {
             element().appendChild(node);
         } else {
             element().replaceChild(node, originalEntry);
         }
+    }
+
+    /**
+     * Removes the basket node from the XML document.
+     */
+    public void removeBasketNode() {
+        element().getParentNode().removeChild(element());
+    }
+
+    /**
+     * Removes the child node with the given entry ID.
+     *
+     * @param entryId the ID of the entry to remove
+     * @return {@code true} if the entry was removed, {@code false} if the entry was not found
+     */
+    public boolean removeChildNode(String entryId) {
+        var originalEntry = objects().get(entryId);
+        if (originalEntry == null) {
+            return false;
+        }
+
+        element().removeChild(originalEntry);
+        return true;
     }
 }

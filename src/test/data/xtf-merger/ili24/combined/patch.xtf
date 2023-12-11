@@ -23,5 +23,9 @@
                 <attr2>Attr2</attr2>
             </ClassA>
         </TopicA>
+
+        <TopicA ili:bid="B2">
+            <ClassA ili:tid="A2_1" delete=""/>
+        </TopicA>
     </ili:datasection>
 </ili:transfer>

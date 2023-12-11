@@ -26,6 +26,8 @@ public final class XtfFileMerger implements XtfMerger {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final String BASKET_ID = "BID";
     private static final String OBJECT_ID = "TID";
+    private static final String DELETE_ATTRIBUTE = "DELETE";
+    private static final String DELETE_ATTRIBUTE_LOWERCASE = DELETE_ATTRIBUTE.toLowerCase();
     private static final String INTERLIS24_NAMESPACE = "http://www.interlis.ch/xtf/2.4/INTERLIS";
 
     private final DocumentBuilderFactory factory;
@@ -79,8 +81,9 @@ public final class XtfFileMerger implements XtfMerger {
     private static boolean mergeBaskets(Document document, Map<String, Basket> baseBaskets, Map<String, Basket> patchBaskets) {
         var isValid = true;
 
-        for (var patchBasket : patchBaskets.entrySet()) {
-            var basketId = patchBasket.getKey();
+        for (var patchBasketEntry : patchBaskets.entrySet()) {
+            var basketId = patchBasketEntry.getKey();
+            var patchBasket = patchBasketEntry.getValue();
 
             var originalBasket = baseBaskets.get(basketId);
             if (originalBasket == null) {
@@ -89,11 +92,24 @@ public final class XtfFileMerger implements XtfMerger {
                 continue;
             }
 
-            for (var patchEntry : patchBasket.getValue().objects().entrySet()) {
-                var entryId = patchEntry.getKey();
+            if (hasDeleteAttribute(patchBasket.element())) {
+                originalBasket.removeBasketNode();
+                continue;
+            }
 
-                var importedNode = document.importNode(patchEntry.getValue(), true);
-                originalBasket.addOrReplaceChild(entryId, importedNode);
+            for (var patchEntry : patchBasket.objects().entrySet()) {
+                var entryId = patchEntry.getKey();
+                var element = patchEntry.getValue();
+
+                if (hasDeleteAttribute(element)) {
+                    if (!originalBasket.removeChildNode(entryId)) {
+                        LOGGER.error("Could not remove entry " + entryId + " from basket " + basketId + " as it does not exist.");
+                        isValid = false;
+                    }
+                } else {
+                    var importedNode = document.importNode(element, true);
+                    originalBasket.addOrReplaceChildNode(entryId, importedNode);
+                }
             }
         }
 
@@ -139,6 +155,10 @@ public final class XtfFileMerger implements XtfMerger {
                 })
                 .collect(Collectors.toMap(e -> getInterlisAttribute(e, OBJECT_ID), e -> e));
         return new Basket(basket, objects);
+    }
+
+    private static boolean hasDeleteAttribute(Element element) {
+        return element.hasAttribute(DELETE_ATTRIBUTE) || element.hasAttribute(DELETE_ATTRIBUTE_LOWERCASE);
     }
 
     private static boolean hasInterlisAttribute(Element element, String attributeName) {

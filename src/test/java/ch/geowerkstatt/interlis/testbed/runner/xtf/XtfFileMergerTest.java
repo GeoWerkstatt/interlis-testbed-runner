@@ -47,6 +47,12 @@ public final class XtfFileMergerTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"ili23", "ili24"})
+    public void deleteElements(String iliVersion) throws IOException {
+        mergeAndValidateXtf(Path.of(DATA_BASE_PATH, iliVersion, "delete"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"ili23", "ili24"})
     public void combinedOperations(String iliVersion) throws IOException {
         mergeAndValidateXtf(Path.of(DATA_BASE_PATH, iliVersion, "combined"));
     }
@@ -73,7 +79,7 @@ public final class XtfFileMergerTest {
         var expectedXml = Files.readString(expectedFile);
         var actualXml = Files.readString(actualFile);
 
-        var nodeMatcher = new DefaultNodeMatcher(ElementSelectors.byNameAndText);
+        var nodeMatcher = new DefaultNodeMatcher(ElementSelectors.byName);
         var diff = DiffBuilder
                 .compare(expectedXml)
                 .withTest(actualXml)
