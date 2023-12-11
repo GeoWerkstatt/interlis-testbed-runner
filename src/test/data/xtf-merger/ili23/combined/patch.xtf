@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TRANSFER xmlns="http://www.interlis.ch/INTERLIS2.3">
+    <DATASECTION>
+        <ModelA.TopicA BID="B1">
+            <ModelA.TopicA.ClassA TID="A1_2">
+                <attr1>New value for attr1</attr1>
+                <!-- missing attribute attr2 -->
+                <line>
+                    <POLYLINE>
+                        <COORD>
+                            <C1>10.0</C1>
+                            <C2>20.0</C2>
+                        </COORD>
+                        <COORD>
+                            <C1>100.0</C1>
+                            <C2>20.0</C2>
+                        </COORD>
+                    </POLYLINE>
+                </line>
+            </ModelA.TopicA.ClassA>
+            <ModelA.TopicA.ClassA TID="A1_3">
+                <attr1>New entry</attr1>
+                <attr2>Attr2</attr2>
+            </ModelA.TopicA.ClassA>
+        </ModelA.TopicA>
+    </DATASECTION>
+</TRANSFER>

@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public final class XtfFileMergerTest {
-    private static final String BASE_PATH = "src/test/data/xtf-merger";
+    private static final String DATA_BASE_PATH = "src/test/data/xtf-merger";
 
     private TestLogAppender appender;
 
@@ -35,11 +35,15 @@ public final class XtfFileMergerTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"ili23", "ili24"})
-    public void validateMergedXtf(String iliVersion) throws Exception {
-        var baseFile = Path.of(BASE_PATH, iliVersion, "data.xtf");
-        var patchFile = Path.of(BASE_PATH, iliVersion, "patch.xtf");
-        var expectedFile = Path.of(BASE_PATH, iliVersion, "expected.xtf");
-        var outputFile = Path.of(BASE_PATH, iliVersion, "output", "merged.xtf");
+    public void combinedOperations(String iliVersion) throws IOException {
+        mergeAndValidateXtf(Path.of(DATA_BASE_PATH, iliVersion, "combined"));
+    }
+
+    private void mergeAndValidateXtf(Path basePath) throws IOException {
+        var baseFile = basePath.resolve("data.xtf");
+        var patchFile = basePath.resolve("patch.xtf");
+        var expectedFile = basePath.resolve("expected.xtf");
+        var outputFile = basePath.resolve("output").resolve("merged.xtf");
 
         var merger = new XtfFileMerger();
 

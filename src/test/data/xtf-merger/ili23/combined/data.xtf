@@ -6,18 +6,30 @@
     </HEADERSECTION>
     <DATASECTION>
         <ModelA.TopicA BID="B1">
-            <ModelA.TopicA.ClassA TID="A1">
+            <ModelA.TopicA.ClassA TID="A1_1">
                 <attr1>Some text</attr1>
                 <attr2>Some more text</attr2>
+                <line>
+                    <POLYLINE>
+                        <COORD>
+                            <C1>1.0</C1>
+                            <C2>2.0</C2>
+                        </COORD>
+                        <COORD>
+                            <C1>1.5</C1>
+                            <C2>2.5</C2>
+                        </COORD>
+                    </POLYLINE>
+                </line>
             </ModelA.TopicA.ClassA>
-            <ModelA.TopicA.ClassA TID="A2">
+            <ModelA.TopicA.ClassA TID="A1_2">
                 <attr1>Some text</attr1>
                 <attr2>Some more text</attr2>
             </ModelA.TopicA.ClassA>
         </ModelA.TopicA>
 
         <ModelA.TopicA BID="B2">
-            <ModelA.TopicA.ClassA TID="A1">
+            <ModelA.TopicA.ClassA TID="A2_1">
                 <attr1>Some text</attr1>
                 <attr2>Some more text</attr2>
             </ModelA.TopicA.ClassA>
