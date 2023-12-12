@@ -4,10 +4,10 @@ import ch.geowerkstatt.interlis.testbed.runner.xtf.XtfMerger;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -15,19 +15,25 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-public final class RunnerTest {
-    private static final String BASE_PATH = "src/test/data/testbed";
-    private static final String BASE_PATH_WITH_PATCHES = "src/test/data/testbed-with-patches";
+public final class RunnerTest extends MockitoTestBase {
+    private static final Path BASE_PATH = Path.of("src/test/data/testbed").toAbsolutePath().normalize();
+    private static final Path BASE_PATH_WITH_PATCHES = Path.of("src/test/data/testbed-with-patches").toAbsolutePath().normalize();
     private static final Path ILI_VALIDATOR_PATH = Path.of("ilivalidator.jar");
 
     private TestLogAppender appender;
-    private XtfMerger nullMerger;
+    @Mock
+    private Validator validatorMock;
+    @Mock
+    private XtfMerger mergerMock;
 
     @BeforeEach
     public void setup() {
         appender = TestLogAppender.registerAppender(Runner.class);
-        nullMerger = (baseFile, patchFile, outputFile) -> true;
     }
 
     @AfterEach
@@ -37,14 +43,11 @@ public final class RunnerTest {
     }
 
     @Test
-    public void runValidatesBaseData() throws IOException {
-        var validatedFiles = new ArrayList<Path>();
-        var options = new TestOptions(Path.of(BASE_PATH), ILI_VALIDATOR_PATH);
+    public void runValidatesBaseData() throws IOException, ValidatorException {
+        when(validatorMock.validate(any(), any())).thenReturn(true);
 
-        var runner = new Runner(options, (file, logFile) -> {
-            validatedFiles.add(file.toAbsolutePath().normalize());
-            return true;
-        }, nullMerger);
+        var options = new TestOptions(BASE_PATH, ILI_VALIDATOR_PATH);
+        var runner = new Runner(options, validatorMock, mergerMock);
 
         var runResult = runner.run();
 
@@ -53,19 +56,20 @@ public final class RunnerTest {
         var errors = appender.getErrorMessages();
         assertIterableEquals(List.of("No patch files found."), errors);
 
-        var expectedBaseDataFile = Path.of(BASE_PATH, "data.xtf").toAbsolutePath().normalize();
+        var expectedBaseDataFile = BASE_PATH.resolve("data.xtf");
         var baseDataFile = options.baseDataFilePath();
         assertFalse(baseDataFile.isEmpty(), "Base data file should have been found.");
         assertEquals(expectedBaseDataFile, baseDataFile.get());
 
-        var expectedFiles = List.of(expectedBaseDataFile);
-        assertIterableEquals(expectedFiles, validatedFiles);
+        verify(validatorMock).validate(eq(expectedBaseDataFile), any());
     }
 
     @Test
-    public void runLogsValidationError() {
-        var options = new TestOptions(Path.of(BASE_PATH), ILI_VALIDATOR_PATH);
-        var runner = new Runner(options, (file, logFile) -> false, nullMerger);
+    public void runLogsValidationError() throws ValidatorException {
+        when(validatorMock.validate(any(), any())).thenReturn(false);
+
+        var options = new TestOptions(BASE_PATH, ILI_VALIDATOR_PATH);
+        var runner = new Runner(options, validatorMock, mergerMock);
 
         var runResult = runner.run();
 
@@ -81,18 +85,19 @@ public final class RunnerTest {
     }
 
     @Test
-    public void runMergesAndValidatesPatchFiles() {
-        var validatedFiles = new ArrayList<Path>();
-        var foundPatchFiles = new ArrayList<Path>();
-        var options = new TestOptions(Path.of(BASE_PATH_WITH_PATCHES), ILI_VALIDATOR_PATH);
+    public void runMergesAndValidatesPatchFiles() throws ValidatorException {
+        var expectedBaseDataFile = BASE_PATH_WITH_PATCHES.resolve("data.xtf");
+        var expectedPatchFile = BASE_PATH_WITH_PATCHES.resolve("constraintA").resolve("testcase-1.xtf");
+        var expectedMergedFile = BASE_PATH_WITH_PATCHES.resolve("output").resolve("constraintA").resolve("testcase-1_merged.xtf");
 
-        var runner = new Runner(options, (file, logFile) -> {
-            validatedFiles.add(file.toAbsolutePath().normalize());
-            return file.getFileName().toString().equals("data.xtf");
-        }, (baseFile, patchFile, outputFile) -> {
-            foundPatchFiles.add(patchFile.toAbsolutePath().normalize());
-            return true;
-        });
+        when(validatorMock.validate(eq(expectedBaseDataFile), any())).thenReturn(true);
+        when(validatorMock.validate(eq(expectedMergedFile), any())).thenReturn(false);
+
+        when(mergerMock.merge(any(), any(), any())).thenReturn(true);
+
+        var options = new TestOptions(BASE_PATH_WITH_PATCHES, ILI_VALIDATOR_PATH);
+
+        var runner = new Runner(options, validatorMock, mergerMock);
 
         var runResult = runner.run();
 
@@ -101,11 +106,9 @@ public final class RunnerTest {
         var errors = appender.getErrorMessages();
         assertTrue(errors.isEmpty(), "No errors should have been logged.");
 
-        var expectedBaseDataFile = Path.of(BASE_PATH_WITH_PATCHES, "data.xtf").toAbsolutePath().normalize();
-        var expectedMergedFile = Path.of(BASE_PATH_WITH_PATCHES, "output", "constraintA", "testcase-1_merged.xtf").toAbsolutePath().normalize();
-        assertIterableEquals(List.of(expectedBaseDataFile, expectedMergedFile), validatedFiles);
+        verify(validatorMock).validate(eq(expectedBaseDataFile), any());
+        verify(validatorMock).validate(eq(expectedMergedFile), any());
 
-        var expectedPatchFile = Path.of(BASE_PATH_WITH_PATCHES, "constraintA", "testcase-1.xtf").toAbsolutePath().normalize();
-        assertIterableEquals(List.of(expectedPatchFile), foundPatchFiles);
+        verify(mergerMock).merge(eq(expectedBaseDataFile), eq(expectedPatchFile), eq(expectedMergedFile));
     }
 }
