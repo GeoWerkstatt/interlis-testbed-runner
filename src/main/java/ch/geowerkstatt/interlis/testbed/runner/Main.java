@@ -1,5 +1,6 @@
 package ch.geowerkstatt.interlis.testbed.runner;
 
+import ch.geowerkstatt.interlis.testbed.runner.xtf.XtfFileMerger;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -28,7 +29,8 @@ public final class Main {
 
         var testOptions = parseTestOptions(args);
         var validator = new InterlisValidator(testOptions);
-        var runner = new Runner(testOptions, validator);
+        var xtfMerger = new XtfFileMerger();
+        var runner = new Runner(testOptions, validator, xtfMerger);
         if (!runner.run()) {
             System.exit(1);
         }
