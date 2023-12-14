@@ -102,13 +102,27 @@ public final class Runner {
             }
 
             var logFile = mergedFile.getParent().resolve(patchFileNameWithoutExtension + ".log");
-            var mergedFileValid = validator.validate(mergedFile, logFile);
-            if (mergedFileValid) {
-                LOGGER.error("Validation of " + mergedFile + " was expected to fail but completed successfully.");
+            var constraintName = patchFile.getParent().getFileName().toString();
+            if (!validateMergedFile(mergedFile, logFile, constraintName)) {
                 valid = false;
             }
         }
 
         return valid;
+    }
+
+    private boolean validateMergedFile(Path mergedFile, Path logFile, String constraintName) throws ValidatorException {
+        if (validator.validate(mergedFile, logFile)) {
+            LOGGER.error("Validation of " + mergedFile + " was expected to fail but completed successfully.");
+            return false;
+        }
+
+        if (!validator.containsConstraintError(logFile, constraintName)) {
+            LOGGER.error("Could not verify constraint " + constraintName + " for merged file " + mergedFile + ". Check the log file at " + logFile + " for details.");
+            return false;
+        }
+
+        LOGGER.info("Validation of " + mergedFile + " failed as expected.");
+        return true;
     }
 }

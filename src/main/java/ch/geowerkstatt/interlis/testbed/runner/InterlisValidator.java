@@ -6,9 +6,11 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.regex.Pattern;
 
 public final class InterlisValidator implements Validator {
     private static final Logger LOGGER = LogManager.getLogger();
+    private static final String CONSTRAINT_ERROR_PREFIX = "Error: ";
 
     private final TestOptions options;
 
@@ -43,6 +45,23 @@ public final class InterlisValidator implements Validator {
             var exitCode = process.waitFor();
             return exitCode == 0;
         } catch (IOException | InterruptedException e) {
+            throw new ValidatorException(e);
+        }
+    }
+
+    @Override
+    public boolean containsConstraintError(Path logFile, String constraintName) throws ValidatorException {
+        var constraintNameWithWordBoundaries = Pattern.compile("\\b" + Pattern.quote(constraintName) + "\\b");
+
+        try (var lines = Files.lines(logFile)) {
+            return lines.anyMatch(line -> {
+                if (line.startsWith(CONSTRAINT_ERROR_PREFIX) && constraintNameWithWordBoundaries.matcher(line).find()) {
+                    LOGGER.info("Found expected error for constraint " + constraintName + " in log file: " + line);
+                    return true;
+                }
+                return false;
+            });
+        } catch (IOException e) {
             throw new ValidatorException(e);
         }
     }
