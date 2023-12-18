@@ -51,6 +51,7 @@ public final class RunnerWithConstraintsTest extends MockitoTestBase {
     public void runMergesAndValidatesPatchFiles() throws ValidatorException {
         when(validatorMock.validate(eq(BASE_DATA_FILE), any())).thenReturn(true);
         when(validatorMock.validate(MERGED_FILE, MERGED_LOG_FILE)).thenReturn(false);
+        when(validatorMock.containsConstraintError(MERGED_LOG_FILE, CONSTRAINT_NAME)).thenReturn(true);
 
         var runner = new Runner(options, validatorMock, mergerMock);
 
@@ -104,6 +105,33 @@ public final class RunnerWithConstraintsTest extends MockitoTestBase {
 
         verify(validatorMock).validate(eq(BASE_DATA_FILE), any());
         verify(validatorMock).validate(eq(MERGED_FILE), any());
+
+        verify(mergerMock).merge(eq(BASE_DATA_FILE), eq(PATCH_FILE), eq(MERGED_FILE));
+    }
+
+    @Test
+    public void runFailsIfNoConstraintErrorInLog() throws ValidatorException {
+        when(validatorMock.validate(eq(BASE_DATA_FILE), any())).thenReturn(true);
+        when(validatorMock.validate(MERGED_FILE, MERGED_LOG_FILE)).thenReturn(false);
+        when(validatorMock.containsConstraintError(MERGED_LOG_FILE, CONSTRAINT_NAME)).thenReturn(false);
+
+        var runner = new Runner(options, validatorMock, mergerMock);
+
+        var runResult = runner.run();
+
+        assertFalse(runResult, "Testbed run should have failed if log file does not contain a constraint error.");
+
+        var errors = appender.getErrorMessages();
+        assertEquals(1, errors.size(), "One error should have been logged.");
+        var errorMessage = errors.getFirst();
+        var expectedErrorMessageStart = "Could not verify constraint " + CONSTRAINT_NAME + " for merged file";
+        assertTrue(
+                errorMessage.startsWith(expectedErrorMessageStart),
+                "Expected error to start with: " + expectedErrorMessageStart + ". Actual: '" + errorMessage + "'.");
+
+        verify(validatorMock).validate(eq(BASE_DATA_FILE), any());
+        verify(validatorMock).validate(eq(MERGED_FILE), eq(MERGED_LOG_FILE));
+        verify(validatorMock).containsConstraintError(eq(MERGED_LOG_FILE), eq(CONSTRAINT_NAME));
 
         verify(mergerMock).merge(eq(BASE_DATA_FILE), eq(PATCH_FILE), eq(MERGED_FILE));
     }

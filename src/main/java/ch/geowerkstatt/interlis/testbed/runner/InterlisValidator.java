@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.regex.Pattern;
 
 public final class InterlisValidator implements Validator {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -43,6 +44,23 @@ public final class InterlisValidator implements Validator {
             var exitCode = process.waitFor();
             return exitCode == 0;
         } catch (IOException | InterruptedException e) {
+            throw new ValidatorException(e);
+        }
+    }
+
+    @Override
+    public boolean containsConstraintError(Path logFile, String constraintName) throws ValidatorException {
+        var constraintPattern = Pattern.compile("^Error: .*\\b" + Pattern.quote(constraintName) + "\\b");
+
+        try (var lines = Files.lines(logFile)) {
+            return lines.anyMatch(line -> {
+                if (constraintPattern.matcher(line).find()) {
+                    LOGGER.info("Found expected error for constraint " + constraintName + " in log file: " + line);
+                    return true;
+                }
+                return false;
+            });
+        } catch (IOException e) {
             throw new ValidatorException(e);
         }
     }
