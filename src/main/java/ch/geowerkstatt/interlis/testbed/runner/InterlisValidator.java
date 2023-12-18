@@ -10,7 +10,6 @@ import java.util.regex.Pattern;
 
 public final class InterlisValidator implements Validator {
     private static final Logger LOGGER = LogManager.getLogger();
-    private static final String CONSTRAINT_ERROR_PREFIX = "Error: ";
 
     private final TestOptions options;
 
@@ -51,11 +50,11 @@ public final class InterlisValidator implements Validator {
 
     @Override
     public boolean containsConstraintError(Path logFile, String constraintName) throws ValidatorException {
-        var constraintNameWithWordBoundaries = Pattern.compile("\\b" + Pattern.quote(constraintName) + "\\b");
+        var constraintPattern = Pattern.compile("^Error: .*\\b" + Pattern.quote(constraintName) + "\\b");
 
         try (var lines = Files.lines(logFile)) {
             return lines.anyMatch(line -> {
-                if (line.startsWith(CONSTRAINT_ERROR_PREFIX) && constraintNameWithWordBoundaries.matcher(line).find()) {
+                if (constraintPattern.matcher(line).find()) {
                     LOGGER.info("Found expected error for constraint " + constraintName + " in log file: " + line);
                     return true;
                 }
