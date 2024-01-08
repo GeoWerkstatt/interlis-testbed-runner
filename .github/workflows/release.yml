@@ -30,7 +30,7 @@ jobs:
         distribution: temurin
 
     - name: Build jar with Gradle
-      run: ./gradlew -Pversion='${{ steps.tag_version.outputs.new_version }}' jar
+      run: ./gradlew -Pversion='${{ steps.tag_version.outputs.new_version }}' jar distZip
 
     - name: Publish to GitHub Maven with Gradle
       run: ./gradlew -Pversion='${{ steps.tag_version.outputs.new_version }}' publishGeowerkstattTestbedRunnerPublicationToGitHubPackagesRepository
@@ -50,7 +50,7 @@ jobs:
 
     - uses: ncipollo/release-action@6c75be85e571768fa31b40abf38de58ba0397db5
       with:
-        artifacts: "build/libs/*.jar"
+        artifacts: "build/libs/*.jar,build/distributions/*.zip"
         makeLatest: true
         name: ${{ steps.tag_version.outputs.new_tag }}
         tag: ${{ steps.tag_version.outputs.new_tag }}
