@@ -39,7 +39,8 @@ java {
 jar {
     manifest {
         attributes(
-                'Main-Class': application.mainClass
+                'Main-Class': application.mainClass,
+                'Class-Path': configurations.runtimeClasspath.collect { file -> file.getName() }.join(' ')
         )
     }
 }
