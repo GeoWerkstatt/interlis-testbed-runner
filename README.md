@@ -71,3 +71,23 @@ Beispiel `FailCase.xtf` (INTERLIS 2.4):
     </ili:datasection>
 </ili:transfer>
 ```
+
+## API
+Einige Funktionalitäten des Runners können auch über das Java API verwendet werden, beispielsweise zur direkten Integration in einem Unit-Test.
+
+### Zusammenfügen von XTF-Dateien
+Das Zusammenfügen der Fail-Cases mit den Basisdaten kann mit der Klasse `XtfFileMerger` durchgeführt werden.
+Die Methode `merge` erwartet die Pfade zu den Basisdaten, den Anpassungen des Fail-Cases und der Ausgabedatei.
+Die XTF-Datei des Fail-Cases ist dabei gleich aufgebaut wie bei der automatischen Ordner-basierten Ausführung des Runners.
+
+Beispiel:
+```java
+import ch.geowerkstatt.interlis.testbed.runner.xtf.XtfFileMerger;
+
+//...
+
+void example() {
+    XtfFileMerger xtfMerger = new XtfFileMerger();
+    xtfMerger.merge(Path.of("path", "to", "base.xtf"), Path.of("path", "to", "failcase.xtf"), Path.of("path", "to", "output.xtf"));
+}
+```
