@@ -37,7 +37,7 @@ public final class Runner {
      * @return {@code true} if the validation was successful, {@code false} otherwise.
      */
     public boolean run() {
-        LOGGER.info("Starting validation of testbed at " + options.basePath());
+        LOGGER.info("Starting validation of testbed at {}", options.basePath());
 
         try {
             if (!validateBaseData()) {
@@ -68,15 +68,15 @@ public final class Runner {
             throw new ValidatorException(e);
         }
 
-        LOGGER.info("Validating base data file " + baseFilePath);
+        LOGGER.info("Validating base data file {}", baseFilePath);
         var filenameWithoutExtension = StringUtils.getFilenameWithoutExtension(baseFilePath.getFileName().toString());
         var logFile = options.resolveOutputFilePath(baseFilePath, filenameWithoutExtension + ".log");
 
         var valid = validator.validate(baseFilePath, logFile);
         if (valid) {
-            LOGGER.info("Validation of " + baseFilePath + " completed successfully.");
+            LOGGER.info("Validation of {} completed successfully.", baseFilePath);
         } else {
-            LOGGER.error("Validation of " + baseFilePath + " failed. See " + logFile + " for details.");
+            LOGGER.error("Validation of {} failed. See {} for details.", baseFilePath, logFile);
         }
         return valid;
     }
@@ -115,16 +115,16 @@ public final class Runner {
 
     private boolean validateMergedFile(Path mergedFile, Path logFile, String constraintName) throws ValidatorException {
         if (validator.validate(mergedFile, logFile)) {
-            LOGGER.error("Validation of " + mergedFile + " was expected to fail but completed successfully.");
+            LOGGER.error("Validation of {} was expected to fail but completed successfully.", mergedFile);
             return false;
         }
 
         if (!validator.containsConstraintError(logFile, constraintName)) {
-            LOGGER.error("Could not verify constraint " + constraintName + " for merged file " + mergedFile + ". Check the log file at " + logFile + " for details.");
+            LOGGER.error("Could not verify constraint {} for merged file {}. Check the log file at {} for details.", constraintName, mergedFile, logFile);
             return false;
         }
 
-        LOGGER.info("Validation of " + mergedFile + " failed as expected.");
+        LOGGER.info("Validation of {} failed as expected.", mergedFile);
         return true;
     }
 }

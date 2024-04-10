@@ -22,12 +22,12 @@ public final class InterlisValidator implements Validator {
     public InterlisValidator(TestOptions options) {
         this.options = options;
 
-        LOGGER.info("Using ilivalidator at " + options.ilivalidatorPath());
+        LOGGER.info("Using ilivalidator at {}", options.ilivalidatorPath());
     }
 
     @Override
     public boolean validate(Path filePath, Path logFile) throws ValidatorException {
-        LOGGER.info("Validating " + filePath + " with log file " + logFile);
+        LOGGER.info("Validating {} with log file {}", filePath, logFile);
         try {
             Files.createDirectories(logFile.getParent());
 
@@ -56,7 +56,7 @@ public final class InterlisValidator implements Validator {
         try (var lines = Files.lines(logFile)) {
             return lines.anyMatch(line -> {
                 if (constraintPattern.matcher(line).find()) {
-                    LOGGER.info("Found expected error for constraint " + constraintName + " in log file: " + line);
+                    LOGGER.info("Found expected error for constraint {} in log file: {}", constraintName, line);
                     return true;
                 }
                 return false;
