@@ -6,9 +6,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -44,7 +42,7 @@ public final class XtfFileMerger implements XtfMerger {
     public boolean merge(Path baseFile, Path patchFile, Path outputFile) {
         try {
             LOGGER.info("Merging {} with {} into {}", baseFile, patchFile, outputFile);
-            var documentBuilder = createDocumentBuilder();
+            var documentBuilder = factory.newDocumentBuilder();
 
             var baseDocument = documentBuilder.parse(baseFile.toFile());
             var patchDocument = documentBuilder.parse(patchFile.toFile());
@@ -72,10 +70,6 @@ public final class XtfFileMerger implements XtfMerger {
             LOGGER.error("Failed to merge files.", e);
             return false;
         }
-    }
-
-    DocumentBuilder createDocumentBuilder() throws ParserConfigurationException {
-        return factory.newDocumentBuilder();
     }
 
     private static boolean mergeBaskets(Document document, Map<String, Basket> baseBaskets, Map<String, Basket> patchBaskets) {
