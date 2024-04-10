@@ -1,5 +1,6 @@
 package ch.geowerkstatt.interlis.testbed.runner;
 
+import ch.geowerkstatt.interlis.testbed.runner.validation.InterlisValidator;
 import ch.geowerkstatt.interlis.testbed.runner.xtf.XtfFileMerger;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
@@ -55,9 +56,9 @@ public final class Main {
         formatter.printHelp("java -jar interlis-testbed-runner.jar [options] [testbed directory (default: current directory)]", options);
     }
 
-    private static TestOptions getTestOptions(CommandLine commandLine) throws ParseException {
+    private static TestOptions getTestOptions(CommandLine commandLine) {
         var remainingArgs = commandLine.getArgList();
-        var basePath = remainingArgs.isEmpty() ? Path.of(".") : Path.of(remainingArgs.get(0));
+        var basePath = remainingArgs.isEmpty() ? Path.of(".") : Path.of(remainingArgs.getFirst());
         var validatorPath = Path.of(commandLine.getOptionValue(VALIDATOR_PATH_OPTION));
         return new TestOptions(basePath, validatorPath);
     }

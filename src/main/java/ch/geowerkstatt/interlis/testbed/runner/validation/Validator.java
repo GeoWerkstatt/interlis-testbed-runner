@@ -1,4 +1,4 @@
-package ch.geowerkstatt.interlis.testbed.runner;
+package ch.geowerkstatt.interlis.testbed.runner.validation;
 
 import java.nio.file.Path;
 

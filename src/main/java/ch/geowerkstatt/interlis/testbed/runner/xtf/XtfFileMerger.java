@@ -6,9 +6,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -43,21 +41,21 @@ public final class XtfFileMerger implements XtfMerger {
     @Override
     public boolean merge(Path baseFile, Path patchFile, Path outputFile) {
         try {
-            LOGGER.info("Merging " + baseFile + " with " + patchFile + " into " + outputFile);
-            var documentBuilder = createDocumentBuilder();
+            LOGGER.info("Merging {} with {} into {}", baseFile, patchFile, outputFile);
+            var documentBuilder = factory.newDocumentBuilder();
 
             var baseDocument = documentBuilder.parse(baseFile.toFile());
             var patchDocument = documentBuilder.parse(patchFile.toFile());
 
             var baseBaskets = findBaskets(baseDocument);
             if (baseBaskets.isEmpty()) {
-                LOGGER.error("No baskets found in base file " + baseFile + ".");
+                LOGGER.error("No baskets found in base file {}.", baseFile);
                 return false;
             }
 
             var patchBaskets = findBaskets(patchDocument);
             if (patchBaskets.isEmpty()) {
-                LOGGER.error("No baskets found in patch file " + patchFile + ".");
+                LOGGER.error("No baskets found in patch file {}.", patchFile);
                 return false;
             }
 
@@ -66,16 +64,12 @@ public final class XtfFileMerger implements XtfMerger {
             }
 
             writeMergedFile(baseDocument, outputFile);
-            LOGGER.info("Successfully merged files into " + outputFile);
+            LOGGER.info("Successfully merged files into {}", outputFile);
             return true;
         } catch (Exception e) {
             LOGGER.error("Failed to merge files.", e);
             return false;
         }
-    }
-
-    DocumentBuilder createDocumentBuilder() throws ParserConfigurationException {
-        return factory.newDocumentBuilder();
     }
 
     private static boolean mergeBaskets(Document document, Map<String, Basket> baseBaskets, Map<String, Basket> patchBaskets) {
@@ -87,7 +81,7 @@ public final class XtfFileMerger implements XtfMerger {
 
             var originalBasket = baseBaskets.get(basketId);
             if (originalBasket == null) {
-                LOGGER.error("Basket " + basketId + " not found in base file.");
+                LOGGER.error("Basket {} not found in base file.", basketId);
                 isValid = false;
                 continue;
             }
@@ -103,7 +97,7 @@ public final class XtfFileMerger implements XtfMerger {
 
                 if (hasDeleteAttribute(element)) {
                     if (!originalBasket.removeChildNode(entryId)) {
-                        LOGGER.error("Could not remove entry " + entryId + " from basket " + basketId + " as it does not exist.");
+                        LOGGER.error("Could not remove entry {} from basket {} as it does not exist.", entryId, basketId);
                         isValid = false;
                     }
                 } else {
@@ -136,7 +130,7 @@ public final class XtfFileMerger implements XtfMerger {
                 .filter(e -> {
                     var hasId = hasInterlisAttribute(e, BASKET_ID);
                     if (!hasId) {
-                        LOGGER.warn("Basket without " + BASKET_ID + " found.");
+                        LOGGER.warn("Basket without {} found.", BASKET_ID);
                     }
                     return hasId;
                 })
@@ -149,7 +143,7 @@ public final class XtfFileMerger implements XtfMerger {
                 .filter(e -> {
                     var hasId = hasInterlisAttribute(e, OBJECT_ID);
                     if (!hasId) {
-                        LOGGER.warn("Entry without " + OBJECT_ID + " found in basket " + basket.getAttribute(BASKET_ID) + ".");
+                        LOGGER.warn("Entry without {} found in basket {}.", OBJECT_ID, basket.getAttribute(BASKET_ID));
                     }
                     return hasId;
                 })

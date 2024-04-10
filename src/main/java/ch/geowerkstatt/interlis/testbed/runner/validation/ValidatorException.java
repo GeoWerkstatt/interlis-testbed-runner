@@ -1,4 +1,4 @@
-package ch.geowerkstatt.interlis.testbed.runner;
+package ch.geowerkstatt.interlis.testbed.runner.validation;
 
 /**
  * Exception that is thrown when the validation failed to run.
