@@ -1,5 +1,7 @@
 package ch.geowerkstatt.interlis.testbed.runner;
 
+import ch.geowerkstatt.interlis.testbed.runner.validation.Validator;
+import ch.geowerkstatt.interlis.testbed.runner.validation.ValidatorException;
 import ch.geowerkstatt.interlis.testbed.runner.xtf.XtfMerger;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

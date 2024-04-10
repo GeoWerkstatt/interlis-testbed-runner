@@ -1,5 +1,6 @@
-package ch.geowerkstatt.interlis.testbed.runner;
+package ch.geowerkstatt.interlis.testbed.runner.validation;
 
+import ch.geowerkstatt.interlis.testbed.runner.TestOptions;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

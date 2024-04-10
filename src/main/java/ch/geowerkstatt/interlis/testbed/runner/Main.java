@@ -1,5 +1,6 @@
 package ch.geowerkstatt.interlis.testbed.runner;
 
+import ch.geowerkstatt.interlis.testbed.runner.validation.InterlisValidator;
 import ch.geowerkstatt.interlis.testbed.runner.xtf.XtfFileMerger;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;

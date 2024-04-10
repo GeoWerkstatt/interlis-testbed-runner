@@ -1,5 +1,7 @@
 package ch.geowerkstatt.interlis.testbed.runner;
 
+import ch.geowerkstatt.interlis.testbed.runner.validation.InterlisValidator;
+import ch.geowerkstatt.interlis.testbed.runner.validation.ValidatorException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
