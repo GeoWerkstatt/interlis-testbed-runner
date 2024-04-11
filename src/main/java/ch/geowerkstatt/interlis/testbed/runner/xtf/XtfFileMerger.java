@@ -49,6 +49,7 @@ public final class XtfFileMerger implements XtfMerger {
      * <p>
      * The base file is expected to be a valid INTERLIS XTF file to which the patch data can be applied to.
      * The patch file is expected to include a data section containing the elements to add, replace or delete.
+     * Object elements are identified by the id of their basket and the object id using the BID and TID attributes.
      * The resulting data will be written to the output file.
      */
     @Override
