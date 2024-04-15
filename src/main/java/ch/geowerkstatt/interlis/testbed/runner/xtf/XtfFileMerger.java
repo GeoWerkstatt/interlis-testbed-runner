@@ -20,6 +20,12 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+/**
+ * Defines a class that can be used to merge INTERLIS XTF files.
+ * <p>
+ * Supports XTF files using a single namespace for INTERLIS up to version 2.3
+ * as well as files for INTERLIS version 2.4 using multiple namespaces.
+ */
 public final class XtfFileMerger implements XtfMerger {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final String BASKET_ID = "BID";
@@ -38,6 +44,14 @@ public final class XtfFileMerger implements XtfMerger {
         factory.setNamespaceAware(true);
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * The base file is expected to be a valid INTERLIS XTF file to which the patch data can be applied to.
+     * The patch file is expected to include a data section containing the elements to add, replace or delete.
+     * Object elements are identified by the id of their basket and the object id using the BID and TID attributes.
+     * The resulting data will be written to the output file.
+     */
     @Override
     public boolean merge(Path baseFile, Path patchFile, Path outputFile) {
         try {
