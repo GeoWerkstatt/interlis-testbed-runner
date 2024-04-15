@@ -14,11 +14,14 @@ public interface Validator {
     boolean validate(Path filePath, Path logFile) throws ValidatorException;
 
     /**
-     * Checks if the log file contains an error for the provided constraint.
+     * Checks if the log file contains at least one error for the provided constraint.
      *
      * @param logFile        the path to the log file.
-     * @param constraintName the name of the constraint to check.
+     * @param constraintName the fully qualified name of the constraint to check.
      * @return {@code true} if the log file contains an error for the constraint, {@code false} otherwise.
+     * @throws ValidatorException if an unexpected error occurred.
      */
-    boolean containsConstraintError(Path logFile, String constraintName) throws ValidatorException;
+    default boolean containsConstraintError(Path logFile, String constraintName) throws ValidatorException {
+        return IliValidatorLogParser.containsConstraintError(logFile, constraintName);
+    }
 }
