@@ -91,3 +91,18 @@ void example() {
     xtfMerger.merge(Path.of("path", "to", "base.xtf"), Path.of("path", "to", "failcase.xtf"), Path.of("path", "to", "output.xtf"));
 }
 ```
+
+### Prüfen von Constraint-Fehlern
+Um zu prüfen, ob mindestens ein Fehler zu einem spezifischen Constraint im Log vorkommt, kann die Klasse `IliValidatorLogParser` verwendet werden.
+Die statische Methode `containsConstraintError` erwartet dazu den Pfad zur Log-Datei sowie den voll-qualifizierten Namen des Constraints.
+
+Beispiel:
+```java
+import ch.geowerkstatt.interlis.testbed.runner.validation.IliValidatorLogParser;
+
+//...
+
+void example() {
+    boolean hasError = IliValidatorLogParser.containsConstraintError(Path.of("path", "to", "validator-log.log"), "Model.Topic.Class.Constraint");
+}
+```
