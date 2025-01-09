@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ili:transfer xmlns:ili="http://www.interlis.ch/xtf/2.4/INTERLIS" xmlns="http://www.interlis.ch/xtf/2.4/ModelA">
     <ili:datasection>
-        <TopicA ili:bid="B2">
-            <DifferentClass TID="A2_1">
+        <TopicA ili:bid="B2" ili:kind="UPDATE">
+            <DifferentClass TID="A2_1" ili:operation="UPDATE" ili:startstate="2025-01-01" ili:endstate="2025-01-10">
                 <attr1>Replaced Value</attr1>
                 <!-- attr2 not set -->
                 <attr3>New attribute</attr3>
