@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ili:transfer xmlns:ili="http://www.interlis.ch/xtf/2.4/INTERLIS" xmlns="http://www.interlis.ch/xtf/2.4/ModelA" xmlns:geom="http://www.interlis.ch/geometry/1.0">
+    <ili:headersection>
+        <ili:models>
+        </ili:models>
+        <ili:sender>interlis-testbed-runner</ili:sender>
+    </ili:headersection>
+    <ili:datasection>
+        <TopicA ili:bid="B1">
+            <ClassA ili:tid="A1_1">
+                <attr1>Some text</attr1>
+                <attr2>Some more text</attr2>
+                <line>
+                    <geom:polyline>
+                        <geom:coord>
+                            <geom:c1>1.0</geom:c1>
+                            <geom:c2>2.0</geom:c2>
+                        </geom:coord>
+                        <geom:coord>
+                            <geom:c1>1.5</geom:c1>
+                            <geom:c2>2.5</geom:c2>
+                        </geom:coord>
+                    </geom:polyline>
+                </line>
+            </ClassA>
+            <ClassA ili:tid="A1_2">
+                <attr1>Some text</attr1>
+                <attr2>Some more text</attr2>
+            </ClassA>
+        </TopicA>
+
+        <TopicA ili:bid="B2">
+            <ClassA ili:tid="A2_1">
+                <attr1>Some text</attr1>
+                <attr2>Some more text</attr2>
+            </ClassA>
+        </TopicA>
+    </ili:datasection>
+</ili:transfer>

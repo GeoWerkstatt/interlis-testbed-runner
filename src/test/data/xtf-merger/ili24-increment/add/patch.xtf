@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ili:transfer xmlns:ili="http://www.interlis.ch/xtf/2.4/INTERLIS" xmlns="http://www.interlis.ch/xtf/2.4/ModelA">
+    <ili:datasection>
+        <TopicA ili:bid="B1" ili:kind="UPDATE">
+            <ClassA ili:tid="A1_2" ili:operation="INSERT">
+                <attr1>New entry</attr1>
+                <attr2>Attr2</attr2>
+            </ClassA>
+        </TopicA>
+
+        <TopicA ili:bid="B3" ili:kind="UPDATE">  
+            <ClassA ili:tid="A3_1"> <!-- Ohne Angabe von operation wird der Wert INSERT angenommen. -->
+                <attr1>Attribute 1</attr1>
+                <attr2>Attribute 2</attr2>
+            </ClassA>
+        </TopicA>
+    </ili:datasection>
+</ili:transfer>
