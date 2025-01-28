@@ -12,5 +12,7 @@
                 <attr2>Some more text</attr2>
             </ClassA>
         </TopicA>
+        <TopicA ili:bid="B2">
+        </TopicA>
     </ili:datasection>
 </ili:transfer>

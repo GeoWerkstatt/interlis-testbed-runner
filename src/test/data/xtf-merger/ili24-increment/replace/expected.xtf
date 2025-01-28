@@ -19,6 +19,11 @@
                 <!-- attr2 not set -->
                 <attr3>New attribute</attr3>
             </DifferentClass>
+            <DifferentClass TID="A2_2">
+                <attr1>Replaced Value</attr1>
+                <!-- attr2 not set -->
+                <attr3>New attribute</attr3>
+            </DifferentClass>
         </TopicA>
     </ili:datasection>
 </ili:transfer>
