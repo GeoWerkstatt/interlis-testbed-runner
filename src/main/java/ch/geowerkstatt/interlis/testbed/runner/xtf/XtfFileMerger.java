@@ -155,7 +155,7 @@ public final class XtfFileMerger implements XtfMerger {
                     }
 
                     var transferKind = getInterlisAttribute(e, BASKET_TRANSFER_KIND);
-                    if(transferKind != null && !transferKind.equals(BASKET_TRANSFER_KIND_UPDATE)) {
+                    if (transferKind != null && !transferKind.equals(BASKET_TRANSFER_KIND_UPDATE)) {
                         LOGGER.warn("Basket with {}={} found. This is not supported.", BASKET_TRANSFER_KIND, BASKET_TRANSFER_KIND_UPDATE);
                         return false;
                     }
