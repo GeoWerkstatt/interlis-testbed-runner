@@ -13,6 +13,7 @@ import java.nio.file.Path;
 
 public final class Main {
     private static final String VALIDATOR_PATH_OPTION = "validator";
+    private static final String VALIDATOR_CONFIG_OPTION = "config";
 
     private Main() {
     }
@@ -74,6 +75,13 @@ public final class Main {
                 .desc("path to ilivalidator.jar")
                 .build();
         options.addOption(validatorPathOption);
+
+        var validatorConfigOption = Option.builder(VALIDATOR_CONFIG_OPTION)
+            .hasArg()
+            .argName("config file")
+            .desc("path to ilivalidator config file")
+            .build();
+        options.addOption(validatorConfigOption);
 
         return options;
     }
