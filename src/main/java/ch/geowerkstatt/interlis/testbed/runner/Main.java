@@ -10,6 +10,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import java.nio.file.Path;
+import java.util.Optional;
 
 public final class Main {
     private static final String VALIDATOR_PATH_OPTION = "validator";
@@ -61,7 +62,7 @@ public final class Main {
         var remainingArgs = commandLine.getArgList();
         var basePath = remainingArgs.isEmpty() ? Path.of(".") : Path.of(remainingArgs.getFirst());
         var validatorPath = Path.of(commandLine.getOptionValue(VALIDATOR_PATH_OPTION));
-        var validatorConfigPath = commandLine.hasOption(VALIDATOR_CONFIG_OPTION) ? Path.of(commandLine.getOptionValue(VALIDATOR_CONFIG_OPTION)) : null;
+        Optional<Path> validatorConfigPath = commandLine.hasOption(VALIDATOR_CONFIG_OPTION) ? Optional.of(Path.of(commandLine.getOptionValue(VALIDATOR_CONFIG_OPTION))) : Optional.empty();
         return new TestOptions(basePath, validatorPath, validatorConfigPath);
     }
 

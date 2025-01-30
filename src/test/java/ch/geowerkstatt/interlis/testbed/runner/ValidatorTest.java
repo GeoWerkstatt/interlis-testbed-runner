@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -22,7 +23,7 @@ public final class ValidatorTest {
 
     @BeforeEach
     public void setup() {
-        options = new TestOptions(BASE_PATH, Path.of("ilivalidator.jar"), null);
+        options = new TestOptions(BASE_PATH, Path.of("ilivalidator.jar"), Optional.empty());
     }
 
     @Test

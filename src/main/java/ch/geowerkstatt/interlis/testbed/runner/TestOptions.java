@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public record TestOptions(Path basePath, Path ilivalidatorPath, Path ilivalidatorConfigPath) {
+public record TestOptions(Path basePath, Path ilivalidatorPath, Optional<Path> ilivalidatorConfigPath) {
     private static final String DATA_FILE_EXTENSION = ".xtf";
     private static final String OUTPUT_DIR_NAME = "output";
 
@@ -20,7 +20,7 @@ public record TestOptions(Path basePath, Path ilivalidatorPath, Path ilivalidato
     public TestOptions {
         basePath = basePath.toAbsolutePath().normalize();
         ilivalidatorPath = ilivalidatorPath.toAbsolutePath().normalize();
-        ilivalidatorConfigPath = ilivalidatorConfigPath != null ? ilivalidatorConfigPath.toAbsolutePath().normalize() : null;
+        ilivalidatorConfigPath = ilivalidatorConfigPath.isPresent() ? Optional.of(ilivalidatorConfigPath.get().toAbsolutePath().normalize()) : Optional.empty();
     }
 
     /**

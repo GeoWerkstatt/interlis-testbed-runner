@@ -39,9 +39,9 @@ public final class InterlisValidator implements Validator {
                     .redirectError(ProcessBuilder.Redirect.DISCARD)
                     .directory(options.basePath().toFile());
 
-            if (options.ilivalidatorConfigPath() != null) {
+            if (options.ilivalidatorConfigPath().isPresent()) {
                 processBuilder.command().add("--config");
-                processBuilder.command().add(options.ilivalidatorConfigPath().toString());
+                processBuilder.command().add(options.ilivalidatorConfigPath().get().toString());
             }
 
             processBuilder.command().add(filePath.toString());
