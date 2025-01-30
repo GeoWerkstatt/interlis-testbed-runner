@@ -37,7 +37,7 @@ public final class RunnerWithConstraintsTest extends MockitoTestBase {
 
     @BeforeEach
     public void setup() {
-        options = new TestOptions(BASE_PATH, Path.of("ilivalidator.jar"));
+        options = new TestOptions(BASE_PATH, Path.of("ilivalidator.jar"), null);
         appender = TestLogAppender.registerAppender(Runner.class);
 
         when(mergerMock.merge(any(), any(), any())).thenReturn(true);

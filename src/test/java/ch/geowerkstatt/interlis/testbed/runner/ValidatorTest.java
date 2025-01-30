@@ -22,7 +22,7 @@ public final class ValidatorTest {
 
     @BeforeEach
     public void setup() {
-        options = new TestOptions(BASE_PATH, Path.of("ilivalidator.jar"));
+        options = new TestOptions(BASE_PATH, Path.of("ilivalidator.jar"), null);
     }
 
     @Test

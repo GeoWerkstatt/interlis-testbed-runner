@@ -61,7 +61,8 @@ public final class Main {
         var remainingArgs = commandLine.getArgList();
         var basePath = remainingArgs.isEmpty() ? Path.of(".") : Path.of(remainingArgs.getFirst());
         var validatorPath = Path.of(commandLine.getOptionValue(VALIDATOR_PATH_OPTION));
-        return new TestOptions(basePath, validatorPath);
+        var validatorConfigPath = commandLine.hasOption(VALIDATOR_CONFIG_OPTION) ? Path.of(commandLine.getOptionValue(VALIDATOR_CONFIG_OPTION)) : null;
+        return new TestOptions(basePath, validatorPath, validatorConfigPath);
     }
 
     private static Options createCliOptions() {
@@ -76,7 +77,8 @@ public final class Main {
                 .build();
         options.addOption(validatorPathOption);
 
-        var validatorConfigOption = Option.builder(VALIDATOR_CONFIG_OPTION)
+        var validatorConfigOption = Option.builder()
+            .longOpt(VALIDATOR_CONFIG_OPTION)
             .hasArg()
             .argName("config file")
             .desc("path to ilivalidator config file")
