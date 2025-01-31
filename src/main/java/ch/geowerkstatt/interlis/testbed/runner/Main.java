@@ -10,9 +10,11 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import java.nio.file.Path;
+import java.util.Optional;
 
 public final class Main {
     private static final String VALIDATOR_PATH_OPTION = "validator";
+    private static final String VALIDATOR_CONFIG_OPTION = "config";
 
     private Main() {
     }
@@ -60,7 +62,8 @@ public final class Main {
         var remainingArgs = commandLine.getArgList();
         var basePath = remainingArgs.isEmpty() ? Path.of(".") : Path.of(remainingArgs.getFirst());
         var validatorPath = Path.of(commandLine.getOptionValue(VALIDATOR_PATH_OPTION));
-        return new TestOptions(basePath, validatorPath);
+        Optional<Path> validatorConfigPath = commandLine.hasOption(VALIDATOR_CONFIG_OPTION) ? Optional.of(Path.of(commandLine.getOptionValue(VALIDATOR_CONFIG_OPTION))) : Optional.empty();
+        return new TestOptions(basePath, validatorPath, validatorConfigPath);
     }
 
     private static Options createCliOptions() {
@@ -74,6 +77,14 @@ public final class Main {
                 .desc("path to ilivalidator.jar")
                 .build();
         options.addOption(validatorPathOption);
+
+        var validatorConfigOption = Option.builder()
+            .longOpt(VALIDATOR_CONFIG_OPTION)
+            .hasArg()
+            .argName("config file")
+            .desc("path to ilivalidator config file")
+            .build();
+        options.addOption(validatorConfigOption);
 
         return options;
     }
