@@ -30,8 +30,13 @@ public final class XtfFileMerger implements XtfMerger {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final String BASKET_ID = "BID";
     private static final String OBJECT_ID = "TID";
+    private static final String BASKET_TRANSFER_KIND = "KIND";
+    private static final String BASKET_TRANSFER_KIND_UPDATE = "UPDATE";
     private static final String DELETE_ATTRIBUTE = "DELETE";
     private static final String DELETE_ATTRIBUTE_LOWERCASE = DELETE_ATTRIBUTE.toLowerCase();
+    private static final String OPERATION_ATTRIBUTE = "operation";
+    private static final String OPERATION_ATTRIBUTE_DELETE = "DELETE";
+    private static final String DELETE_OBJECT_NAME = "delete";
     private static final String INTERLIS24_NAMESPACE = "http://www.interlis.ch/xtf/2.4/INTERLIS";
 
     private final DocumentBuilderFactory factory;
@@ -108,13 +113,15 @@ public final class XtfFileMerger implements XtfMerger {
             for (var patchEntry : patchBasket.objects().entrySet()) {
                 var entryId = patchEntry.getKey();
                 var element = patchEntry.getValue();
+                var objectOperation = getInterlisAttribute(element, OPERATION_ATTRIBUTE);
 
-                if (hasDeleteAttribute(element)) {
+                if (hasDeleteAttribute(element) || OPERATION_ATTRIBUTE_DELETE.equals(objectOperation) || isDeleteObject(element)) {
                     if (!originalBasket.removeChildNode(entryId)) {
                         LOGGER.error("Could not remove entry {} from basket {} as it does not exist.", entryId, basketId);
                         isValid = false;
                     }
                 } else {
+                    element.removeAttributeNS(INTERLIS24_NAMESPACE, OPERATION_ATTRIBUTE);
                     var importedNode = document.importNode(element, true);
                     originalBasket.addOrReplaceChildNode(entryId, importedNode);
                 }
@@ -142,11 +149,18 @@ public final class XtfFileMerger implements XtfMerger {
 
         var baskets = streamChildElementNodes(dataSection.get())
                 .filter(e -> {
-                    var hasId = hasInterlisAttribute(e, BASKET_ID);
-                    if (!hasId) {
+                    if (!hasInterlisAttribute(e, BASKET_ID)) {
                         LOGGER.warn("Basket without {} found.", BASKET_ID);
+                        return false;
                     }
-                    return hasId;
+
+                    var transferKind = getInterlisAttribute(e, BASKET_TRANSFER_KIND);
+                    if (transferKind != null && !transferKind.equals(BASKET_TRANSFER_KIND_UPDATE)) {
+                        LOGGER.warn("Basket with {}={} found. This is not supported.", BASKET_TRANSFER_KIND, BASKET_TRANSFER_KIND_UPDATE);
+                        return false;
+                    }
+
+                    return true;
                 })
                 .collect(Collectors.toMap(e -> getInterlisAttribute(e, BASKET_ID), XtfFileMerger::collectBasket));
         return Optional.of(baskets);
@@ -183,6 +197,10 @@ public final class XtfFileMerger implements XtfMerger {
             return element.getAttributeNS(INTERLIS24_NAMESPACE, ili24Name);
         }
         return null;
+    }
+
+    private static boolean isDeleteObject(Element element) {
+        return element.getNamespaceURI().equals(INTERLIS24_NAMESPACE) && DELETE_OBJECT_NAME.equalsIgnoreCase(element.getLocalName());
     }
 
     private static Optional<Element> findDataSection(Document document) {

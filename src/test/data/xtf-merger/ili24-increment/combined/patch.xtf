@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ili:transfer xmlns:ili="http://www.interlis.ch/xtf/2.4/INTERLIS" xmlns="http://www.interlis.ch/xtf/2.4/ModelA" xmlns:geom="http://www.interlis.ch/geometry/1.0">
+    <ili:datasection>
+        <TopicA ili:bid="B1" ili:kind="UPDATE">
+            <ClassA ili:tid="A1_2" ili:operation="UPDATE">
+                <attr1>New value for attr1</attr1>
+                <!-- missing attribute attr2 -->
+                <line>
+                    <geom:polyline>
+                        <geom:coord>
+                            <geom:c1>10.0</geom:c1>
+                            <geom:c2>20.0</geom:c2>
+                        </geom:coord>
+                        <geom:coord>
+                            <geom:c1>100.0</geom:c1>
+                            <geom:c2>20.0</geom:c2>
+                        </geom:coord>
+                    </geom:polyline>
+                </line>
+            </ClassA>
+            <ClassA ili:tid="A1_3" ili:operation="INSERT">
+                <attr1>New entry</attr1>
+                <attr2>Attr2</attr2>
+            </ClassA>
+        </TopicA>
+
+        <TopicA ili:bid="B2">
+            <ClassA ili:tid="A2_1" ili:operation="DELETE"/>
+        </TopicA>
+    </ili:datasection>
+</ili:transfer>

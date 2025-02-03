@@ -34,25 +34,25 @@ public final class XtfFileMergerTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"ili23", "ili24"})
+    @ValueSource(strings = {"ili23", "ili24", "ili24-increment"})
     public void addElements(String iliVersion) throws IOException {
         mergeAndValidateXtf(Path.of(DATA_BASE_PATH, iliVersion, "add"));
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"ili23", "ili24"})
+    @ValueSource(strings = {"ili23", "ili24", "ili24-increment"})
     public void replaceElements(String iliVersion) throws IOException {
         mergeAndValidateXtf(Path.of(DATA_BASE_PATH, iliVersion, "replace"));
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"ili23", "ili24"})
+    @ValueSource(strings = {"ili23", "ili24", "ili24-increment"})
     public void deleteElements(String iliVersion) throws IOException {
         mergeAndValidateXtf(Path.of(DATA_BASE_PATH, iliVersion, "delete"));
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"ili23", "ili24"})
+    @ValueSource(strings = {"ili23", "ili24", "ili24-increment"})
     public void combinedOperations(String iliVersion) throws IOException {
         mergeAndValidateXtf(Path.of(DATA_BASE_PATH, iliVersion, "combined"));
     }
