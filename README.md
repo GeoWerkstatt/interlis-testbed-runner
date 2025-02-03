@@ -23,10 +23,13 @@ TestSuiteA
             …
 ```
 
-Der Runner kann mit folgendem Befehl ausgeführt werden:
+Der Runner kann mit folgenden Befehlen ausgeführt werden:
 ```bash
 java -jar interlis-testbed-runner.jar --validator <Pfad zu ilivalidator.jar> <Pfad zum Testbed-Ordner (Standard: aktueller Ordner)>
+java -jar interlis-testbed-runner.jar -v <Pfad zu ilivalidator.jar> --config <Pfad zu ilivalidator config> <Pfad zum Testbed-Ordner (Standard: aktueller Ordner)>
 ```
+
+
 
 Der Runner führt dabei folgende Schritte aus:
 - Die XTF-Datei der Basisdaten wird geprüft und muss gemäss Modell gültig sein

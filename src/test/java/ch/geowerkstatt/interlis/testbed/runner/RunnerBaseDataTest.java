@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -35,7 +36,7 @@ public final class RunnerBaseDataTest extends MockitoTestBase {
 
     @BeforeEach
     public void setup() {
-        options = new TestOptions(BASE_PATH, Path.of("ilivalidator.jar"));
+        options = new TestOptions(BASE_PATH, Path.of("ilivalidator.jar"), Optional.empty());
         appender = TestLogAppender.registerAppender(Runner.class);
     }
 
