@@ -39,7 +39,9 @@ Die Header-Section kann bei den Fail-Case Dateien weggelassen werden, da sie von
 
 ### Hinzufügen oder ersetzen von Elementen
 Um für einen Fail-Case ein Objekt zu einem Basket hinzuzufügen oder zu überschreiben, kann es wie in einer XTF-Datei üblich beschrieben werden.
-Falls das Objekt mit der angegebenen `TID` im Basket vorhanden ist, wird es mit den hier definierten Attributen überschrieben, ansonsten zum Basket hinzugefügt.
+Falls das Objekt mit der angegebenen `TID` im Basket vorhanden ist, wird es mit den hier definierten Attributen überschrieben, ansonsten zum Basket hinzugefügt. 
+
+Zusätzlich zu einfachen XTF Dateien können auch INTERLIS 2.4 XTF Dateien mit inkrementeller Syntax verwendet werden. Es gelten im gegensatz zur Spezifikation die angenommenen Standardwerte `ili:kind="UPDATE"` und `ili:operation="UPDATE"` um mit der vereinfachten Syntax kompatibel zu sein. Für den Update eines Baskets wird lediglich `ili:kind="UPDATE"` unterstützt.
 
 Beispiel `FailCase.xtf` (INTERLIS 2.4):
 ```xml
@@ -49,15 +51,24 @@ Beispiel `FailCase.xtf` (INTERLIS 2.4):
         <Topic ili:bid="<basket id>">
             <!-- Das Objekt mit dieser TID wird hinzugefügt oder überschrieben -->
             <Class ili:tid="<object id>">
-                <!-- Attribute -->
+                <!-- Attributes -->
             </Class>
         </Topic>
+        <Topic ili:bid="<basket id>" ili:kind="UPDATE">
+            <!-- Ein neues Objekt wird hinzugefügt -->
+            <Class ili:tid="<new object id>" ili:operation="INSERT">
+                <!-- Attributes -->
+            </Class>
+            <!-- Ein bestehendes Objekt wird überschrieben -->
+            <Class ili:tid="<existing object id>" ili:operation="UPDATE">
+                <!-- Attributes -->
+            </Class>
     </ili:datasection>
 </ili:transfer>
 ```
 
 ### Entfernen von Elementen
-Um für einen Fail-Case ein Objekt aus einem Basket oder einen kompletten Basket zu entfernen, kann dem Element ein `delete`-Attribut hinzugefügt werden.
+Um für einen Fail-Case ein Objekt aus einem Basket oder einen kompletten Basket zu entfernen, kann dem Element ein `delete`-Attribut hinzugefügt werden. Für das Entfernen von Objekten kann ebenfalls die inkrementelle Syntax von INTERLIS 2.4 verwendet werden.
 
 Beispiel `FailCase.xtf` (INTERLIS 2.4):
 ```xml
@@ -67,7 +78,11 @@ Beispiel `FailCase.xtf` (INTERLIS 2.4):
         <Topic ili:bid="<basket id>">
             <!-- Das Objekt mit dieser TID wird aus dem Basket entfernt -->
             <Class ili:tid="<object id>" delete="" />
+            <Class ili:tid="<object id>" ili:operation="DELETE" />
+            <ili:delete ili:tid="<object id>" />
         </Topic>
+        <!-- Der gesamte Basket wird entfernt -->
+        <Topic ili:bid="<basket id>" delete="">
     </ili:datasection>
 </ili:transfer>
 ```
